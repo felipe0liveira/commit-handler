@@ -1,6 +1,5 @@
 const https = require('https');
-
-// https://github.com/felipe0liveira/felipe0liveira.dev/commits/master
+const scrapper = require('./scrapper');
 
 const options = {
 	hostname: 'github.com',
@@ -8,13 +7,25 @@ const options = {
 	method: 'GET'
 };
 
-const req = https.request(options, res => {
-	let data = '';
-	res.on('data', d => data += d);
+const getGithub = () => {
+	const initialTimeStamp = new Date();
+	const req = https.request(options, res => {
+		let data = '';
+		res.on('data', d => data += d);
 
-	res.on('end', () => {
-		console.log(data);
+		res.on('end', () => {
+			const commits = scrapper(data);
+			console.log('|');
+			console.log(`| Hash Found: ${commits[0].hash}`);
+			console.log(`| Elapsed Time: ${(new Date - initialTimeStamp) / 1000}s`);
+			console.log('|');
+
+			getGithub();
+		});
 	});
-});
 
-req.end();
+	req.end();
+}
+
+console.clear();
+getGithub();

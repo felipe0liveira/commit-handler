@@ -4,9 +4,19 @@ module.exports = (html) => {
 	const $ = cheerio.load(html);
 
 	const commits = [];
-	$('.commit-group a.sha');
 
-	return {
-		lastCommit: ''
-	};
+	const commitElements = $('.commit-group a.sha');
+
+	for (let i = 0; i < commitElements.length; i++) {
+		const commit = commitElements[i];
+
+		const href = commit.attribs.href;
+		const hash = href.substr(href.length - 40);
+
+		commits.push({
+			hash
+		});
+	}
+
+	return commits;
 };
